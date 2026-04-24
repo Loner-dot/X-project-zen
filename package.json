@@ -1,0 +1,18 @@
+{
+  "name": "x-project-zen-gen",
+  "version": "1.5.0",
+  "description": "Session Generator for X-PROJECT | ZEN",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "express": "^4.18.2",
+    "pino": "^8.19.0",
+    "fs-extra": "^11.2.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
