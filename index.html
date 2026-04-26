@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>𝗫-𝗣𝗥𝗢𝗝𝗘𝗖𝗧 | 𝗭𝗘𝗡</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #000000;
+            --card-bg: #050505;
+            --accent: #ffffff;
+            --text-dim: #666;
+            --glow: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Cinematic Background Blur */
+        .nebula {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            filter: blur(150px);
+            opacity: 0.05;
+            z-index: -1;
+            animation: float 10s infinite alternate;
+        }
+
+        @keyframes float {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(50%, 50%); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #1a1a1a;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-area h2 {
+            font-size: 24px;
+            letter-spacing: 8px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(to bottom, #fff, #444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sub-tag {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 18px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: 0.4s;
+        }
+
+        input:focus {
+            border-color: #444;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ccc;
+            transform: translateY(-2px);
+        }
+
+        button:active { transform: translateY(0); }
+
+        button:disabled {
+            background: #111;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        #code-display {
+            margin-top: 40px;
+            min-height: 50px;
+        }
+
+        .code-box {
+            font-family: 'Courier New', monospace;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .code-box:hover { text-shadow: 0 0 10px #fff; }
+
+        .status-msg {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 15px;
+            height: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Scrollbar-hide */
+        body::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <div class="nebula"></div>
+    
+    <div class="card">
+        <div class="logo-area">
+            <h2>𝗫-𝗣𝗥𝗢𝗝𝗘𝗖𝗧</h2>
+            <div class="sub-tag">𝗭𝗘𝗡 𝗦𝗘𝗦𝗦𝗜𝗢𝗡 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="phone" placeholder="Enter Number (e.g. 234...)">
+        </div>
+
+        <button id="gen-btn" onclick="requestPairing()">Generate Pairing Code</button>
+
+        <div id="code-display">
+            <div id="pairing-code" class="code-box"></div>
+            <div id="status" class="status-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        async function requestPairing() {
+            const phoneInput = document.getElementById('phone');
+            const btn = document.getElementById('gen-btn');
+            const codeBox = document.getElementById('pairing-code');
+            const status = document.getElementById('status');
+            
+            const phone = phoneInput.value.replace(/\D/g, '');
+            if(!phone || phone.length < 10) {
+                return alert("Please enter a valid phone number with country code!");
+            }
+
+            // UI Loading State
+            btn.disabled = true;
+            codeBox.innerText = "";
+            status.innerText = "Initializing Socket...";
+
+            try {
+                // Fetch call with timeout/cache bypass
+                const response = await fetch(`/pair?phone=${phone}&v=${Date.now()}`);
+                const data = await response.json();
+
+                if(data.code) {
+                    status.innerText = "Success! Click to copy";
+                    codeBox.innerText = data.code;
+                    
+                    // Copy to clipboard
+                    codeBox.onclick = () => {
+                        navigator.clipboard.writeText(data.code);
+                        status.innerText = "Copied to clipboard!";
+                        setTimeout(() => status.innerText = "Success! Click to copy", 2000);
+                    };
+                } else {
+                    status.innerText = data.error || "Connection Failed";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                status.innerText = "Server Unreachable";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
