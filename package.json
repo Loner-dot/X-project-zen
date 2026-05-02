@@ -1,0 +1,18 @@
+{
+  "name": "x-project-zen",
+  "version": "1.0.0",
+  "description": "X-Project Zen Session Generator",
+  "main": "pair.js",
+  "type": "module",
+  "scripts": {
+    "start": "node pair.js"
+  },
+  "dependencies": {
+    "@nexustechpro/baileys": "latest",
+    "express": "^4.18.2",
+    "pino": "^8.15.0",
+    "fs": "latest",
+    "path": "latest",
+    "url": "latest"
+  }
+}
